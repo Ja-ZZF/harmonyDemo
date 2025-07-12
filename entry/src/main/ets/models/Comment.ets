@@ -11,4 +11,5 @@ export interface  CommentSimple{
   comment_time : Date;
   like_stats : LikeStats;
   children : CommentSimple[];
+  parent?: CommentSimple; // ✅ 新增字段，用于嵌套中传递“被回复者”
 }

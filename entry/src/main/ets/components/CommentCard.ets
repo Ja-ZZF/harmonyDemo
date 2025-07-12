@@ -1,67 +1,140 @@
+import { formatSmartTime } from "../commons/utils/TimeUtils";
 import { CommentSimple } from "../models/Comment";
 import { MediaSimple } from "../models/Media";
+import { UserSimple } from "../models/User";
+
 
 @Component
 export struct CommentCard {
   @Prop comment: CommentSimple;
+  @Prop depth: number = 0;
 
-  formatTime(date: Date): string {
+  // 获取安全 commenter 信息（带默认值）
+  private getCommenter(): UserSimple {
+    return this.comment.commenter ?? {
+      user_id: 0,
+      nickname: '匿名用户',
+      avatar: 'common/default_avatar.png',
+      email: 'default@abc.com',
+      is_followed: false,
+    };
+  }
+
+  // 生成显示文本：是否为“回复 xxx”形式
+  // 生成显示名：顶层评论显示昵称，子评论显示“xxx 回复 yyy”
+  private getDisplayName(): string {
+    const commenter = this.getCommenter();
+    if (this.depth > 0 && this.comment.parent?.commenter?.nickname) {
+      const parentNickname = this.comment.parent.commenter.nickname;
+      return `${commenter.nickname} 回复 ${parentNickname}`;
+    } else {
+      return commenter.nickname;
+    }
+  }
+
+
+  // ArkTS 不支持 {...child}，手动复制构造新对象
+  private createChildComment(child: CommentSimple, parent: CommentSimple): CommentSimple {
+    return {
+      comment_id: child.comment_id,
+      post_id: child.post_id,
+      commenter: child.commenter,
+      content: child.content,
+      medias: child.medias,
+      comment_time: child.comment_time,
+      like_stats: child.like_stats,
+      children: child.children,
+      parent: parent, // 显式添加 parent 字段
+    };
+  }
+
+  private formatTime(date: Date): string {
     let d = new Date(date);
     return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}`;
   }
 
   build() {
-    Column({ space: 6 }) {
-      // 顶部: 头像 + 昵称 + 时间 + 点赞
-      Row({ space: 10 }) {
-        // 头像
-        Image(this.comment.commenter.avatar)
-          .width(32).height(32)
+    Column(){
+    Column() {
+      Row() {
+        // 头像 - 固定宽度
+        Image(this.getCommenter().avatar)
+          .width(32)
+          .height(32)
           .borderRadius(16)
 
-        // 昵称 & 时间
-        Column() {
-          Text(this.comment.commenter.nickname)
-            .fontSize(15).fontWeight(FontWeight.Medium)
-          Text(this.formatTime(this.comment.comment_time))
-            .fontSize(12).fontColor('#999999')
-        }.layoutWeight(1)
+        // 头像右侧内容区，左边距10
+        Column({ space: 6 }) {
+          // 第一行：昵称/回复 + 点赞（右侧）
+          Row() {
+            Text(this.getDisplayName())
+              .fontSize(15)
+              .fontWeight(FontWeight.Medium)
+              .flexGrow(1)
+              .textOverflow({ overflow: TextOverflow.Ellipsis })
 
-        // 点赞
-        Row({ space: 4 }) {
-          Image(this.comment.like_stats.is_liked ? 'common/heart_fill.png' : 'common/heart_outline.png')
-            .width(16).height(16)
-          Text(`${this.comment.like_stats.like_count}`)
-            .fontSize(12)
+            Row({ space: 4 }) {
+              Image(this.comment.like_stats.is_liked ? $r('app.media.liked') : $r('app.media.like'))
+                .width(16)
+                .height(16)
+              Text('123')
+                .fontSize(12)
+            }
+            .width(60) // 给个宽度
+          }
+          .width('100%')
+          .alignItems(VerticalAlign.Center)
+          .justifyContent(FlexAlign.SpaceBetween)
+
+          // 第二行：正文内容
+          if (this.comment.content.trim() !== '') {
+            Text() {
+              Span(this.comment.content)
+                .fontSize(14)
+                .fontColor('#333333')
+
+              Span('  ')
+
+              Span(formatSmartTime(this.comment.comment_time))
+                .fontSize(12)
+                .fontColor('#999999')
+            }
+            .width('100%')
+            .maxLines(1)
+            .textOverflow({ overflow: TextOverflow.Ellipsis })
+            .textAlign(TextAlign.Start)
+          }
+
+
         }
+        .margin({ left: 10 })
+        .flexGrow(1)
       }
+      .width('100%')
+      .padding(12)
+      .backgroundColor('#FAFAFA')
+      .borderRadius(12)
+      .margin({ bottom: 8 })
+      .alignItems(VerticalAlign.Top)
 
-      // 评论内容
-      if (this.comment.content.trim() !== '') {
-        Text(this.comment.content)
-          .fontSize(14)
-          .fontColor('#333333')
-      }
-
-      // 评论图片（可选）
-      if (this.comment.medias.length > 0) {
-        Row({ space: 8 }) {
-          ForEach(this.comment.medias, (media: MediaSimple) => {
-            Image(media.url)
-              .width(80)
-              .height(80)
-              .borderRadius(8)
-              .objectFit(ImageFit.Cover)
-          }, (media: MediaSimple) => media.media_id.toString())
+      // 子评论递归，放外层单独 Column
+      if (this.comment.children.length > 0) {
+        Column({ space: 6 }) {
+          ForEach(this.comment.children, (child: CommentSimple) => {
+            CommentCard({
+              comment: this.createChildComment(child, this.comment),
+              depth: this.depth + 1
+            })
+          }, (child: CommentSimple) => child.comment_id.toString())
         }
+        .width('100%')
       }
-
-      // 子评论预留：可展开的 children
-      // 可以后补上递归嵌套 CommentCard 的实现
     }
-    .padding(12)
-    .backgroundColor('#FAFAFA')
-    .borderRadius(12)
-    .margin({ bottom: 8 })
+    .width('100%')
   }
+    .margin({ left: this.depth == 1 ? 42 : 0 }) // 仅对一级评论缩进
+  }
+
+
+
 }
