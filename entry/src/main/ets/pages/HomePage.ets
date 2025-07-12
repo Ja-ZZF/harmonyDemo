@@ -1,6 +1,6 @@
 //主页
 
-import { PostCard } from '../components/PostCard';
+import { PostCardSimple } from '../components/PostCard';
 import { PostDetail, PostSimple } from '../models/Post';
 import { UserSimple } from '../models/User';
 import { PostService } from '../services/post.service';
@@ -26,8 +26,6 @@ struct HomePage {
     this.user = await this.userService.getSelf(); //获取用户信息
     this.posts = await this.postService.getAllPost(); //获取所有笔记信息
 
-    const postDetail : PostDetail = await this.postService.getPostDetail(1);
-
     console.info('笔记信息：',this.posts);
   }
 
@@ -47,7 +45,7 @@ struct HomePage {
             ForEach(
               this.posts.filter((item: PostSimple, index: number) => index % 2 === 0),
               (item: PostSimple) => {
-                PostCard({ post: item })
+                PostCardSimple({ post: item })
                   .width('100%')
               },
               (item: PostSimple) => item.post_id.toString()
@@ -58,7 +56,7 @@ struct HomePage {
           // 右列
           Column({ space: 8 }) {
             ForEach(this.posts.filter((item : PostSimple, index : number) => index % 2 === 1), (item : PostSimple) => {
-              PostCard({ post: item })
+              PostCardSimple({ post: item })
                 .width('100%')
             }, (item:PostSimple) => item.post_id.toString())
           }

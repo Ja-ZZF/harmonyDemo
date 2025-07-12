@@ -1,7 +1,7 @@
 import { PostSimple } from "../models/Post";
 
 @Component
-export struct PostCard {
+export struct PostCardSimple {
   @Prop post: PostSimple;
 
   build() {
