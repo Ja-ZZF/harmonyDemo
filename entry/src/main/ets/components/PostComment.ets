@@ -5,7 +5,7 @@ import { UserSimple } from "../models/User";
 
 
 @Component
-export struct CommentCard {
+export struct PostComment {
   @Prop comment: CommentSimple;
   @Prop depth: number = 0;
 
@@ -20,7 +20,6 @@ export struct CommentCard {
     };
   }
 
-  // 生成显示文本：是否为“回复 xxx”形式
   // 生成显示名：顶层评论显示昵称，子评论显示“xxx 回复 yyy”
   private getDisplayName(): string {
     const commenter = this.getCommenter();
@@ -48,11 +47,6 @@ export struct CommentCard {
     };
   }
 
-  private formatTime(date: Date): string {
-    let d = new Date(date);
-    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}`;
-  }
-
   build() {
     Column(){
     Column() {
@@ -77,10 +71,11 @@ export struct CommentCard {
               Image(this.comment.like_stats.is_liked ? $r('app.media.liked') : $r('app.media.like'))
                 .width(16)
                 .height(16)
-              Text('123')
+              Text(this.comment.like_stats.like_count.toString())
                 .fontSize(12)
             }
             .width(60) // 给个宽度
+            .onClick(this.likeClick.bind(this))
           }
           .width('100%')
           .alignItems(VerticalAlign.Center)
@@ -112,7 +107,8 @@ export struct CommentCard {
       }
       .width('100%')
       .padding(12)
-      .backgroundColor('#FAFAFA')
+      //.backgroundColor('#FAFAFA')
+      .backgroundColor('#FFFFFF') // 或直接移除这一行
       .borderRadius(12)
       .margin({ bottom: 8 })
       .alignItems(VerticalAlign.Top)
@@ -121,7 +117,7 @@ export struct CommentCard {
       if (this.comment.children.length > 0) {
         Column({ space: 6 }) {
           ForEach(this.comment.children, (child: CommentSimple) => {
-            CommentCard({
+            PostComment({
               comment: this.createChildComment(child, this.comment),
               depth: this.depth + 1
             })
@@ -133,6 +129,24 @@ export struct CommentCard {
     .width('100%')
   }
     .margin({ left: this.depth == 1 ? 42 : 0 }) // 仅对一级评论缩进
+  }
+
+  likeClick() {
+    // 切换点赞状态
+    const newIsLiked = !this.comment.like_stats.is_liked;
+    let newLikeCount = this.comment.like_stats.like_count;
+
+    if (newIsLiked) {
+      newLikeCount += 1;
+    } else {
+      newLikeCount -= 1;
+    }
+
+    // 重新赋值新对象，触发视图更新
+    this.comment.like_stats = {
+      is_liked: newIsLiked,
+      like_count: newLikeCount,
+    };
   }
 
 

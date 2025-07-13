@@ -13,7 +13,7 @@ struct Index {
     }
     .onAppear(() => {
       console.info('准备跳转');
-      router.pushUrl({ url: 'pages/LoginPage' });
+      router.pushUrl({ url: 'pages/PostDetailPage' });
       //router.pushUrl({ url: 'pages/NaturalPage' });
       console.info('跳转调用结束');
 

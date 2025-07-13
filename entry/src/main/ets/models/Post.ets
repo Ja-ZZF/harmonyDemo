@@ -1,9 +1,9 @@
 import { CommentSimple } from "./Comment";
 import { MediaSimple } from "./Media";
-import { Permission } from "./Permission";
-import { CollectStats, LikeStats } from "./Stats";
+import { createEmptyPermission, Permission } from "./Permission";
+import { CollectStats, createEmptyCollectStats, createEmptyLikeStats, LikeStats } from "./Stats";
 import { TagSimple } from "./Tags";
-import { UserSimple } from "./User";
+import { createEmptyUserSimple, UserSimple } from "./User";
 
 export interface  PostSimpleRequest{
   post_ids : number[];
@@ -28,4 +28,29 @@ export interface  PostDetail{
   comment_count : number;
   tags : TagSimple[];
   comments : CommentSimple[];
+}
+
+export function createEmptyPostSimple() : PostSimple{
+  return{
+    post_id : 0,
+    title: '',
+    publisher : createEmptyUserSimple(),
+    like_stats : createEmptyLikeStats(),
+    cover_url : ''
+  };
+}
+
+export function createEmptyPostDetail(): PostDetail {
+  return {
+    post_simple : createEmptyPostSimple(),
+    content : '',
+    medias :[],
+    permission : createEmptyPermission(),
+    publish_time : new Date(),
+    collect_stats : createEmptyCollectStats(),
+    browse_count : 0,
+    comment_count : 0,
+    tags : [],
+    comments : [],
+  };
 }

@@ -5,3 +5,13 @@ export interface UserSimple {
   email: string;
   is_followed: boolean;
 }
+
+export function createEmptyUserSimple(): UserSimple {
+  return {
+    user_id: 0,
+    avatar: '',
+    nickname: '',
+    email: '',
+    is_followed: false
+  };
+}

@@ -3,6 +3,7 @@
 import { PostDetail, PostSimple, PostSimpleRequest } from "../models/Post";
 import { ApiService } from "./api.service"
 import { AuthService } from "./auth.service";
+import { preferences } from "@kit.ArkData";
 
 export class PostService{
   private apiService = new ApiService();

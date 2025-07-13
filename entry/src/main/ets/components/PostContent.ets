@@ -1,17 +1,57 @@
+import { formatTime } from "../commons/utils/TimeUtils";
+import { TagSimple } from "../models/Tags";
+
 @Component
-export struct PostContentSection {
+export struct PostContent {
+  @Prop title: string;
   @Prop content: string;
+  @Prop tags: TagSimple[];
+  @Prop publish_time: Date;
 
   build() {
-
     Column() {
+      //标题
+      Text(this.title)
+        .fontSize(24)
+        .fontColor('#000000')
+        .fontWeight('bold')
+        .lineHeight(32)
+        .width('100%')
+        .textAlign(TextAlign.Start)
+
+      //正文
       Text(this.content)
         .fontSize(16)
         .fontColor('#222222')
-        .textAlign(TextAlign.Start)
         .lineHeight(24)
-        .maxLines(1000) // 你可以在此处将其设为固定行数以实现“展开/收起”
+        .maxLines(1000)
+        .width('100%')
+        .textAlign(TextAlign.Start)
+
+      //tags
+      Row({
+        space: 8,
+      }) {
+        ForEach(this.tags, (tag : TagSimple) => {
+          Text(`#${tag.name}`)
+            .fontSize(14)
+            .fontColor('#1E90FF')
+            .fontWeight('500')
+            .textAlign(TextAlign.Start);
+        });
+      }
+      .margin({ top: 12 })
+      .width('100%')
+
+      // 发布时间
+      Text(formatTime(this.publish_time))
+        .fontSize(12)
+        .fontColor('#888888')
+        .textAlign(TextAlign.Start)
+        .width('100%')
+        .margin({top : 12})
     }
-    .padding({ top: 12, bottom: 12 })
+    .padding({ top: 12 })
+    .width('100%')
   }
 }
