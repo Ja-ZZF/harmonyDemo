@@ -88,25 +88,38 @@ export struct PostCommentNew {
             .alignItems(VerticalAlign.Center)
             .justifyContent(FlexAlign.SpaceBetween)
 
-            // 第二行 正文 + 时间
-            if (this.comment.content.trim() !== '') {
-              Text()
-              {
-                Span(this.comment.content)
-                  .fontSize(14)
-                  .fontColor('#333333')
+            // 第二行 正文 + 时间 + 图片
+            if (this.comment.content.trim() !== '' || this.comment.medias.length > 0) {
+              Column({ space: 6 }) {
+                // 第一行：内容 + 时间
+                if (this.comment.content.trim() !== '') {
+                  Text() {
+                    Span(this.comment.content)
+                      .fontSize(14)
+                      .fontColor('#333333')
 
-                Span('  ')
+                    Span('  ')
 
-                Span(formatSmartTime(this.comment.comment_time))
-                  .fontSize(12)
-                  .fontColor('#999999')
+                    Span(formatSmartTime(this.comment.comment_time))
+                      .fontSize(12)
+                      .fontColor('#999999')
+                  }
+                  .width('100%')
+                  .maxLines(1)
+                  .textOverflow({ overflow: TextOverflow.Ellipsis })
+                  .textAlign(TextAlign.Start)
+                }
+
+                // 第二行：图片
+                if (this.comment.medias.length > 0) {
+                  Image(this.comment.medias[0].url)
+                    .borderRadius(4)
+                    .width('60%')
+                }
               }
-              .width('100%')
-              .maxLines(1)
-              .textOverflow({ overflow: TextOverflow.Ellipsis })
-              .textAlign(TextAlign.Start)
+              .alignItems(HorizontalAlign.Start)
             }
+
 
             // 根评论点击切换展开状态
             if (this.depth === 0 && this.comment.children.length > 0) {

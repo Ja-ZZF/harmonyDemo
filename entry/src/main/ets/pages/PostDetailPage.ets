@@ -9,6 +9,7 @@ import { PostImageCarousel } from '../components/PostImageCarousel';
 import { PostContent } from '../components/PostContent';
 import { PostCommentNew } from '../components/PostCommentNew';
 import { eventBus, EventPayload } from '../commons/utils/EventBus';
+import { convertMediaUrls } from '../commons/utils/MediaUtils';
 
 
 @Entry
@@ -49,7 +50,7 @@ struct PostDetailPage {
       {
         Column({ space: 12 }) {
           //图片
-          PostImageCarousel({ medias: this.postDetail.medias })
+          PostImageCarousel({ medias: convertMediaUrls(this.postDetail.medias,'medium') })
 
           //正文
           PostContent({
@@ -59,11 +60,14 @@ struct PostDetailPage {
             publish_time : this.postDetail.publish_time,
           })
 
+          //分割线
           Shape()
             .height(1)
             .width('100%')
             .backgroundColor('#EEEEEE')
             .margin({top:8,bottom:8})
+
+          //评论总数提示
           Text('共 '+this.postDetail.comment_count.toString()+' 条评论')
             .textAlign(TextAlign.Start)
             .width('100%')

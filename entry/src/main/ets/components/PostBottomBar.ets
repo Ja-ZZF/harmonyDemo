@@ -1,7 +1,9 @@
 import { CollectStats, createEmptyCollectStats, createEmptyLikeStats, LikeStats } from "../models/Stats";
-import { prompt } from "@kit.ArkUI";
 import { CommentService } from "../services/comment.service";
 import { eventBus } from "../commons/utils/EventBus";
+import picker from "@ohos.file.picker";
+
+
 
 @Component
 export struct PostBottomBar {
@@ -209,8 +211,18 @@ struct CommentDialog {
 
   }
 
-  pickImage() {
-    // 示例：调用图片选择器
-    prompt.showToast({ message: '这里调用选择图片的逻辑' });
+  async pickImage() {
+
+
+    //从相册选择
+    let PhotoSelectOptions = new picker.PhotoSelectOptions();
+    PhotoSelectOptions.MIMEType = picker.PhotoViewMIMETypes.IMAGE_TYPE;
+    PhotoSelectOptions.maxSelectNumber = 1;
+    let photoPicker = new picker.PhotoViewPicker();
+    photoPicker.select(PhotoSelectOptions).then(async (PhotoSelectResult) => {
+      if (PhotoSelectResult.photoUris.length) {
+        console.log(`图片本地路径：${PhotoSelectResult.photoUris[0]}`)
+      }
+    })
   }
 }
