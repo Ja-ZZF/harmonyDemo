@@ -12,6 +12,26 @@
     "requestPermissions": [
       {
         "name": "ohos.permission.INTERNET"
+      },
+      {
+        "name": "ohos.permission.READ_MEDIA",
+        "reason": "$string:permission_reason_get_photos",
+        "usedScene": {
+          "abilities": [
+            "EntryAbility"
+          ],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.WRITE_MEDIA",
+        "reason": "$string:permission_reason_get_photos",
+        "usedScene": {
+          "abilities": [
+            "EntryAbility"
+          ],
+          "when": "always"
+        }
       }
     ],
 

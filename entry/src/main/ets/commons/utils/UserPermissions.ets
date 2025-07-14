@@ -1,4 +1,4 @@
-import { abilityAccessCtrl, common, Permissions } from "@kit.AbilityKit";
+import { abilityAccessCtrl, common,Permissions } from "@kit.AbilityKit";
 
 interface rejectObj {
   code: number
@@ -17,3 +17,25 @@ export async function applyPermission(context: common.UIAbilityContext, permissi
 
   })
 }
+
+export async function checkAndRequestPermissions(context: common.UIAbilityContext) {
+  const permissions: Permissions[] = [
+    'ohos.permission.READ_MEDIA',
+    'ohos.permission.WRITE_MEDIA',
+    'ohos.permission.WRITE_DOCUMENT',
+  ];
+
+  try {
+    const granted: boolean = await applyPermission(context, permissions);
+    if (granted) {
+      console.info('用户授权成功，可以执行后续操作');
+    } else {
+      console.warn('部分权限未授权，相关功能可能不可用');
+    }
+  } catch (err) {
+    console.error('申请权限失败: ', JSON.stringify(err));
+  }
+}
+
+
+

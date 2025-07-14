@@ -6,6 +6,7 @@
     "pages/PostDetailPage",
     "pages/RootPage",
     "pages/HomePage",
-    "pages/HotPage"
+    "pages/HotPage",
+    "pages/TestFilePage"
   ]
 }

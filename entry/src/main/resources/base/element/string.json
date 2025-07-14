@@ -11,6 +11,14 @@
     {
       "name": "EntryAbility_label",
       "value": "TimeSnap"
+    },
+    {
+      "name": "permission_reason_get_photos",
+      "value": "App needs access to photos to save images."
+    },
+    {
+      "name": "permission_used_scene_entry",
+      "value": "Used in entry ability"
     }
   ]
 }

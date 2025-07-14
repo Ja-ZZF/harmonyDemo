@@ -14,9 +14,7 @@ struct Index {
     .onAppear(() => {
       console.info('准备跳转');
       router.pushUrl({ url: 'pages/RootPage' });
-      //router.pushUrl({ url: 'pages/HomePage' });
-      //router.pushUrl({ url: 'pages/PostDetailPage' });
-      //router.pushUrl({ url: 'pages/LoginPage' });
+      //router.pushUrl({ url: 'pages/TestFilePage' });
       console.info('跳转调用结束');
 
     })
