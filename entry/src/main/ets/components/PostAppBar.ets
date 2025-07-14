@@ -1,4 +1,5 @@
 import { UserSimple } from "../models/User";
+import { router } from "@kit.ArkUI";
 
 @Component
 export struct PostAppBar {
@@ -10,6 +11,9 @@ export struct PostAppBar {
       Image($r('app.media.back'))
         .width(24)
         .height(24)
+        .onClick(()=>{
+          router.back();
+        })
 
       // 头像
       Image(this.user.avatar)

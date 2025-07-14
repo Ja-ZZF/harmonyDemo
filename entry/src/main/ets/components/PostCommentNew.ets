@@ -2,12 +2,21 @@ import { formatSmartTime } from "../commons/utils/TimeUtils";
 import { CommentSimple } from "../models/Comment";
 import { MediaSimple } from "../models/Media";
 import { UserSimple } from "../models/User";
+import { CommentDialog } from "./Dialog/CommentDialog";
 
 
 @Component
 export struct PostCommentNew {
   @Prop comment: CommentSimple;
   @Prop depth: number = 0;
+
+  commentDialogController : CustomDialogController = new CustomDialogController({
+    builder : CommentDialog({
+      postId : this.comment.post_id,
+      parentCommentId : this.comment.comment_id,
+    }),
+    alignment : DialogAlignment.Bottom,
+  })
 
   // 新增状态控制是否展开
   @State private expanded: boolean = false;
@@ -47,6 +56,11 @@ export struct PostCommentNew {
       children: child.children,
       parent: parent, // 显式添加 parent 字段
     };
+  }
+
+  aboutToAppear(): void {
+    console.info(`评论id: ${this.comment.comment_id}, depth: ${this.depth}, children数量: ${this.comment.children.length}`);
+
   }
 
   build() {
@@ -175,6 +189,10 @@ export struct PostCommentNew {
       .width('100%')
     }
     .margin({ left: this.depth === 1 ? 42 : 0 })
+    .onClick(()=>{
+      this.expanded = true;
+      this.commentDialogController.open();
+    })
   }
 
   likeClick() {

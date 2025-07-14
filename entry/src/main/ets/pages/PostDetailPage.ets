@@ -1,15 +1,14 @@
-import { PostComment } from '../components/PostComment';
 import { PostAppBar } from '../components/PostAppBar';
 import { PostBottomBar} from '../components/PostBottomBar'
 import { CommentSimple } from '../models/Comment';
-import { createEmptyPostDetail, PostDetail } from '../models/Post';
-import { createEmptyUserSimple, UserSimple } from '../models/User';
+import { createEmptyPostDetail, PostDetail, PostDetailParams } from '../models/Post';
 import { PostService } from '../services/post.service'
 import { PostImageCarousel } from '../components/PostImageCarousel';
 import { PostContent } from '../components/PostContent';
 import { PostCommentNew } from '../components/PostCommentNew';
 import { eventBus, EventPayload } from '../commons/utils/EventBus';
 import { convertMediaUrls } from '../commons/utils/MediaUtils';
+import { router } from '@kit.ArkUI';
 
 
 @Entry
@@ -22,11 +21,15 @@ struct PostDetailPage {
   @State postDetail: PostDetail = createEmptyPostDetail();
 
   async aboutToAppear(): Promise<void> {
+    const params = router.getParams() as PostDetailParams;
+    this.postId = params.postId ?? 0;
     this.postDetail = await this.postService.getPostDetail(this.postId);
 
-    eventBus.on('refreshPostComments', (payload: EventPayload) => {
+    eventBus.on('refreshPostComments', async (payload: EventPayload) => {
       if (payload.type === 'refresh' && Number(payload.data) === this.postId) {
-        this.refreshComments();
+        console.info('刷新');
+        //await this.refreshComments();
+        await this.refreshDetails();
       }
     });
 
@@ -37,6 +40,26 @@ struct PostDetailPage {
     const detail = await this.postService.getPostDetail(this.postId);
     this.postDetail.comments = detail.comments;
     this.postDetail.comment_count = detail.comment_count;
+  }
+
+  async refreshDetails() : Promise<void>{
+    console.info('正在刷新全部...');
+    const newDetail = await this.postService.getPostDetail(this.postId);
+
+    this.postDetail = {
+      post_simple : newDetail.post_simple,
+      content : newDetail.content,
+      medias : newDetail.medias,
+      permission : newDetail.permission,
+      publish_time : newDetail.publish_time,
+      collect_stats : newDetail.collect_stats,
+      browse_count : newDetail.browse_count,
+      comment_count : newDetail.comment_count,
+      tags : newDetail.tags,
+      comments : newDetail.comments,
+    }
+
+    console.info('全部评论：',JSON.stringify(this.postDetail.comments));
   }
 
 

@@ -9,12 +9,17 @@ export interface  PostSimpleRequest{
   post_ids : number[];
 }
 
+export interface PostDetailParams {
+  postId?: number;
+}
+
 export interface PostSimple{
   post_id : number;
   title : string;
   publisher : UserSimple;
   like_stats : LikeStats;
   cover_url : string;
+  is_video : boolean;
 }
 
 export interface  PostDetail{
@@ -36,7 +41,8 @@ export function createEmptyPostSimple() : PostSimple{
     title: '',
     publisher : createEmptyUserSimple(),
     like_stats : createEmptyLikeStats(),
-    cover_url : ''
+    cover_url : '',
+    is_video : false,
   };
 }
 

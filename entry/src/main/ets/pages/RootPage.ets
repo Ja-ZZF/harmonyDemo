@@ -1,9 +1,11 @@
 import { DiscoverPage } from './DiscoverPage';
+import { HomePage } from './HomePage';
+import { HotPage } from './HotPage';
 
 @Entry
 @Component
-export struct HomePage {
-  @State currentIndex : number = 1;
+struct RootPage {
+  @State currentIndex : number = 0;
 
   private  tabsController : TabsController = new TabsController();
 
@@ -19,18 +21,12 @@ export struct HomePage {
       if(title) {
         Text(title)
           .fontFamily('HarmonyHeiTi-Medium')
-          .fontSize(14)
+          .fontSize(18)
           .fontColor(this.currentIndex === targetIndex ? '#0A59F7' : 'rgba(0,0,0,0.60)')
           .textAlign(TextAlign.Center)
           .lineHeight(14)
           .fontWeight(500)
-          .margin({bottom: 6})
       }
-      Divider()
-        .width(24)
-        .strokeWidth(2)
-        .color('#0A59F7')
-        .opacity(this.currentIndex === targetIndex ? 1 : 0)
     }
     .width('100%')
     .height('100%')
@@ -43,25 +39,35 @@ export struct HomePage {
   }
 
   build() {
-    Tabs({barPosition : BarPosition.Start,controller : this.tabsController}) {
-      TabContent() {
-        DiscoverPage()
+    Tabs({barPosition : BarPosition.End,controller : this.tabsController}){
+      TabContent(){
+        HomePage();
       }
-      .tabBar(this.tabBarBuilder(0, '关注'))
+      .tabBar(this.tabBarBuilder(0,'首页'))
 
-      TabContent() {
-        DiscoverPage()
+      TabContent(){
+        HotPage();
       }
-      .tabBar(this.tabBarBuilder(1, '发现'))
+      .tabBar(this.tabBarBuilder(1,'热门'))
 
-      TabContent() {
+      TabContent(){
         DiscoverPage()
       }
-      .tabBar(this.tabBarBuilder(2, '圈子'))
+      .tabBar(this.tabBarBuilder(2,'',$r('app.media.add')))
+
+      TabContent(){
+        DiscoverPage()
+      }
+      .tabBar(this.tabBarBuilder(3,'消息'))
+
+      TabContent(){
+        DiscoverPage()
+      }
+      .tabBar(this.tabBarBuilder(4,'我的'))
     }
-    .barMode(BarMode.Fixed)
-    .barWidth('40%')
-    .barHeight('4%')
-
+    .barHeight(50)
+    .barOverlap(true)
+    .barBackgroundBlurStyle(BlurStyle.Regular);
   }
 }
+
