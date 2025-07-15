@@ -3,6 +3,7 @@ import { BusinessError } from '@kit.BasicServicesKit';
 import fs from '@ohos.file.fs';
 
 
+//点击打开相册选择照片
 export function onClickSelectPhoto(callback: (result: photoAccessHelper.PhotoSelectResult | null, err?: BusinessError) => void) {
   const TAG: string = "12345";
   try {
@@ -27,6 +28,7 @@ export function onClickSelectPhoto(callback: (result: photoAccessHelper.PhotoSel
   }
 }
 
+//复制相册到缓存
 export async function copyPhotoToCache(imgUrl : string) {
   const ctx = getContext();
   const imgName = Date.now();

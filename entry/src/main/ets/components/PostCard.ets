@@ -49,5 +49,8 @@ export struct PostCardSimple {
     .backgroundColor('#ffffff')
     .borderRadius(4)
     .shadow({ color: '#00000010', radius: 4, offsetX: 0, offsetY: 2 })
+
+
+
   }
 }

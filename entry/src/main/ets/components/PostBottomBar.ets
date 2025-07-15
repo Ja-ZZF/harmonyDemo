@@ -29,7 +29,8 @@ export struct PostBottomBar {
         Text('说点什么…')
           .fontSize(14)
           .fontColor(Color.Gray)
-      }        .width('55%')
+      }
+      .width('55%')
       .height(36)
       .backgroundColor(0xFFF0F0F0)
       .borderRadius(18)
@@ -38,7 +39,6 @@ export struct PostBottomBar {
       .onClick(() => {
         console.info('点击了说点什么');
         this.commentDialogController.open()
-
       })
 
       // 右侧功能区域

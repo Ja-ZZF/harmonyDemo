@@ -1,6 +1,6 @@
 
-import { ApiService } from '../services/api.service';
-import { copyPhotoToCache, onClickSelectPhoto } from '../commons/utils/imageHandler';
+import { ApiService } from '../../services/api.service';
+import { copyPhotoToCache, onClickSelectPhoto } from '../../commons/utils/imageHandler';
 import fs from '@ohos.file.fs';
 
 @Entry

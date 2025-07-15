@@ -7,6 +7,8 @@
     "pages/RootPage",
     "pages/HomePage",
     "pages/HotPage",
-    "pages/TestFilePage"
+    "pages/test/TestFilePage",
+    "pages/test/TestAnimationPage",
+    "pages/test/TestDialogPage"
   ]
 }

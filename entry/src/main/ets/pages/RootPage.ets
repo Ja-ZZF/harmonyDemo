@@ -13,19 +13,20 @@ struct RootPage {
   tabBarBuilder(targetIndex: number, title?: string, icon?: Resource) {
     Column() {
       if(icon) {
-        Image(icon)
-          .width(25)
-          .height(25)
+        Image(this.currentIndex === 1?$r('app.media.add_white'):icon)
+          .width(36)
+          .height(36)
+          .padding({bottom : 4})
       }
 
       if(title) {
         Text(title)
           .fontFamily('HarmonyHeiTi-Medium')
           .fontSize(18)
-          .fontColor(this.currentIndex === targetIndex ? '#0A59F7' : 'rgba(0,0,0,0.60)')
+          .fontColor(this.currentIndex === 1 ? Color.White : Color.Black)
           .textAlign(TextAlign.Center)
           .lineHeight(14)
-          .fontWeight(500)
+          .fontWeight(this.currentIndex === targetIndex ? FontWeight.Bolder : FontWeight.Normal)
       }
     }
     .width('100%')
@@ -66,8 +67,9 @@ struct RootPage {
       .tabBar(this.tabBarBuilder(4,'我的'))
     }
     .barHeight(50)
-    .barOverlap(true)
-    .barBackgroundBlurStyle(BlurStyle.Regular);
+    .barBackgroundColor(this.currentIndex === 1 ?Color.Black : Color.White)
+    // .barOverlap(true)
+    // .barBackgroundBlurStyle(BlurStyle.Regular);
   }
 }
 

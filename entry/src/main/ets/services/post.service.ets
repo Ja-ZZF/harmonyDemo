@@ -20,7 +20,10 @@ export class PostService{
     const posts : PostSimple[] = await this.apiService.get<PostSimple[]>('posts/simple_all');
     console.info('posts: ',JSON.stringify(posts));
 
-    return posts;
+    // 简单随机排序
+    const postsNew = posts.sort(() => Math.random() - 0.5);
+
+    return postsNew;
   }
 
   async getPostDetail(post_id : number){
@@ -34,8 +37,10 @@ export class PostService{
     const endpoint = 'posts/video_list';
     const list : number[] = await this.apiService.get<number[]>(endpoint);
 
+    const Sortedlist :number[]= list.sort(() => Math.random() - 0.5);  // 简单随机排序
+
     console.info(list.toString());
 
-    return list;
+    return Sortedlist;
   }
 }
