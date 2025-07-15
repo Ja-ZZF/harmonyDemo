@@ -23,7 +23,7 @@ struct LoginPage {
       console.info('Token：', response.access_token);
       console.info('id：', response.user_id);
 
-      await router.pushUrl({ url: 'pages/PostDetailPage' }); //跳转
+      await router.pushUrl({ url: 'pages/RootPage' }); //跳转
     } catch (err) {
       console.error('登录失败');
     }

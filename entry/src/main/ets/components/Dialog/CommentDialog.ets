@@ -95,8 +95,6 @@ export struct CommentDialog {
   }
 
   async pickImage() {
-
-
     //从相册选择
     let PhotoSelectOptions = new picker.PhotoSelectOptions();
     PhotoSelectOptions.MIMEType = picker.PhotoViewMIMETypes.IMAGE_TYPE;
