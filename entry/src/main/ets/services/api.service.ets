@@ -12,12 +12,12 @@ import { checkAndRequestPermissions } from '../commons/utils/UserPermissions';
 import { BusinessError, request, RequestData } from '@kit.BasicServicesKit';
 import  File  from '@ohos.request';  // 这里的路径根据你的项目实际调整
 
-interface FileItem {
-  filename: string;
-  name: string;
-  uri: string;
-  type: string;
-}
+// interface FileItem {
+//   filename: string;
+//   name: string;
+//   uri: string;
+//   type: string;
+// }
 
 export class ApiService {
   private baseUrl = Config.baseUrl;
@@ -101,8 +101,8 @@ export class ApiService {
     await fs.close(file.fd);
   }
 
-  async downloadFileNew(endpoint : string){
-    const url = this.baseUrl + endpoint;
+  async downloadFileNew(url : string){
+    //const url = this.baseUrl + endpoint;
     const request = http.createHttp();
 
     try{
@@ -121,73 +121,71 @@ export class ApiService {
     }
   }
 
-  async uploadFile(endpoint : string,path : string){
-    const url = this.baseUrl + endpoint;
-    console.info("request url = ",url);
-    const uploadPath = `internal://cache/${path.split('cache/')[1]}`;
-    console.info("uploadPath = ",uploadPath);
-    const ctx = getContext();
-    const token = AuthService.getToken(ctx);
-    let uploadTask: request.UploadTask;
 
-    await request.uploadFile(ctx,{
-      url : url,
-      header: {
-        'Accept': '*/*' ,
-        'Authorization': `Bearer ${token}`
-      },
-      method : "POST",
-      files:[{filename : "file.jpg",name:"file",uri:uploadPath,type: "image/jpeg"}],
-      data:[],
-    }).then((data: request.UploadTask) => {
-      uploadTask = data;
-    }).catch((err: BusinessError) => {
-      console.error(`Failed to request the upload. Code: ${err.code}, message: ${err.message}`);
-    });
-  }
-
-
-  async uploadPostWithImages(endpoint: string, paths: string[], title: string, content: string) {
-    const url = this.baseUrl + endpoint;
-    const ctx = getContext();
-    const token = AuthService.getToken(ctx);
+  //上传图片到服务器 ！！！
+  async uploadPostWithImages(paths: string[]) : Promise<string[]>{
+    const endpoint = 'upload/image';
+    const url = this.baseUrl + endpoint; // 上传地址
+    const ctx = getContext(); //上下文
+    const token = AuthService.getToken(ctx); //token解析
 
     // 构造files数组，多个文件
-    const files : FileItem[]= paths.map((path, index) => {
+    const files: request.File[] = paths.map((path, index) => {
       const fileName = path.split('/').pop() || `file${index}.jpg`;
       const uri = `internal://cache/${fileName}`;
+      console.info("image URI = ", uri);
       return {
         filename: fileName,
-        name: "images",       // ⚠️字段名必须和后端的 FilesInterceptor 名一致
+        name: "images", // ⚠️字段名必须和后端的 FilesInterceptor 名一致
         uri: uri,
-        type: "image/jpeg",   // 你也可以动态判断后缀改type
-      } as FileItem;
+        type: "image/jpeg", // 你也可以动态判断后缀改type
+      } as request.File;
     });
 
+    console.info('files: ', JSON.stringify(files));
 
+    return new Promise<string[]>(async (resolve, reject) => {
+      try {
+        const arr: string[] = [];
+        const uploadTask = await request.uploadFile(ctx, {
+          url: url,
+          header: {
+            'Accept': '*/*',
+            'Authorization': `Bearer ${token}`
+          },
+          method: "POST",
+          files: files,
+          data: [],
+        });
 
-    try {
-      const uploadTask = await request.uploadFile(ctx, {
-        url: url,
-        header: {
-          'Accept': '*/*',
-          'Authorization': `Bearer ${token}`
-        },
-        method: "POST",
-        files: files,
-        data:[
-          { name: "title", value: title },
-          { name: "content", value: content }
-        ],
-      });
+        uploadTask.on('headerReceive', (header) => {
+          if (header["body"]) {
+            try {
+              // 假设响应体是 {"data": "图片url"} 格式
+              const result: string = header["body"] as string
+              console.info('result =', result);
+              if (result) {
+                arr.push(result);
+              }
+            } catch (err) {
+              console.warn('解析 header body 失败:', err);
+            }
+          }
+        });
 
-      uploadTask.on('complete', (result) => {
-        console.info('上传完成:', result);
-      });
-    } catch (err) {
-      console.error('上传失败:', err);
-    }
+        uploadTask.on('complete', (event) => {
+          console.log('上传完成:', event);
+          resolve(arr);
+        });
+
+      } catch (error) {
+        console.error('上传异常:', error);
+        reject(error);
+      }
+    });
   }
+
+
 
 
 }

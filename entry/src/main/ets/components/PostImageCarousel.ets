@@ -1,10 +1,25 @@
+import { eventBus, EventPayload } from '../commons/utils/EventBus';
 import { MediaSimple } from '../models/Media';
+import { ApiService } from '../services/api.service';
+import { SaveImageDialog } from './Dialog/SaveImageDialog';
 
 @Component
 export struct PostImageCarousel {
-  @Prop medias: MediaSimple[] = [];
+  private apiService = new ApiService();
 
+  @Prop medias: MediaSimple[] = [];
   @State currentIndex: number = 0;
+
+  imageDialogController : CustomDialogController = new CustomDialogController({
+    builder : SaveImageDialog({
+    }),
+    alignment : DialogAlignment.Bottom,
+  })
+
+  aboutToAppear() {
+    eventBus.on('saveImage', this.handleSaveImage.bind(this));
+  }
+
 
   build() {
     Column({ space: 8 }) {
@@ -15,6 +30,15 @@ export struct PostImageCarousel {
             .width('100%')
             .aspectRatio(3 / 4)
             .objectFit(ImageFit.Cover)
+            .gesture(
+              // 绑定可以重复触发的LongPressGesture
+              LongPressGesture({ repeat: false })
+                .onAction((event: GestureEvent|undefined) => {
+                  if(event){
+                    this.imageDialogController.open();
+                  }
+                }
+                ))
         })
       }
       .onChange(index => {
@@ -40,5 +64,12 @@ export struct PostImageCarousel {
       }
     }
     .width('100%')
+  }
+
+  private handleSaveImage(payload: EventPayload) {
+    if (payload.type === 'saveImage' && payload.data) {
+      console.info('收到保存请求:', payload.data);
+      this.apiService.downloadFileNew(this.medias[this.currentIndex].url);
+    }
   }
 }

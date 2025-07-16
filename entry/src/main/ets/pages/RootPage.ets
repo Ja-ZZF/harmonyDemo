@@ -1,10 +1,12 @@
 import { DiscoverPage } from './DiscoverPage';
+import { EditPage } from './EditPage';
 import { HomePage } from './HomePage';
 import { HotPage } from './HotPage';
 
 @Entry
 @Component
 struct RootPage {
+
   @State currentIndex : number = 0;
 
   private  tabsController : TabsController = new TabsController();
@@ -42,17 +44,17 @@ struct RootPage {
   build() {
     Tabs({barPosition : BarPosition.End,controller : this.tabsController}){
       TabContent(){
-        HomePage();
+        HomePage({isActive : this.currentIndex === 0});
       }
       .tabBar(this.tabBarBuilder(0,'首页'))
 
       TabContent(){
-        HotPage();
+        HotPage({isActive : this.currentIndex === 1});
       }
       .tabBar(this.tabBarBuilder(1,'热门'))
 
       TabContent(){
-        DiscoverPage()
+        EditPage({ isActive : this.currentIndex == 2 });
       }
       .tabBar(this.tabBarBuilder(2,'',$r('app.media.add')))
 
@@ -71,5 +73,6 @@ struct RootPage {
     // .barOverlap(true)
     // .barBackgroundBlurStyle(BlurStyle.Regular);
   }
+
 }
 

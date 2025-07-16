@@ -16,6 +16,7 @@ import { CircleShape } from "@kit.ArkUI";
 @Entry
 @Component
 export struct HotPage {
+  @Prop isActive: boolean = false; //是否活跃
   private postService = new PostService();
 
   //@State postDetailsList : PostDetail[] = [];
@@ -75,7 +76,7 @@ export struct HotPage {
   }
 
   build() {
-    if (this.loadedCount <=2 ) {
+    if (this.loadedCount <=2 || !this.isActive) {
       Column() {
         Progress({
           value: null, // 不设置 value 就是无限旋转
@@ -114,7 +115,6 @@ export struct HotPage {
                   .height('97%')
                   .align(Alignment.Top)
               }
-
 
               //底部信息
               VideoBottomBar({

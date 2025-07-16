@@ -9,6 +9,7 @@
     "pages/HotPage",
     "pages/test/TestFilePage",
     "pages/test/TestAnimationPage",
-    "pages/test/TestDialogPage"
+    "pages/test/TestDialogPage",
+    "pages/EditPage"
   ]
 }

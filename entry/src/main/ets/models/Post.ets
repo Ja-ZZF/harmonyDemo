@@ -13,6 +13,12 @@ export interface PostDetailParams {
   postId?: number;
 }
 
+export interface AddPostByUrls{
+  title:string;
+  content : string;
+  urls: string[];
+}
+
 export interface PostSimple{
   post_id : number;
   title : string;

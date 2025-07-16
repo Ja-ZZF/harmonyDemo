@@ -3,6 +3,7 @@ import { DiscoverPage } from './DiscoverPage';
 @Entry
 @Component
 export struct HomePage {
+  @Prop isActive: boolean = false;
   @State currentIndex : number = 1;
 
   private  tabsController : TabsController = new TabsController();
