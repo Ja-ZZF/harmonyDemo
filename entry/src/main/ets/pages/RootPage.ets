@@ -2,6 +2,7 @@ import { DiscoverPage } from './DiscoverPage';
 import { EditPage } from './EditPage';
 import { HomePage } from './HomePage';
 import { HotPage } from './HotPage';
+import {MinePage} from  './MinePage'
 
 @Entry
 @Component
@@ -64,7 +65,7 @@ struct RootPage {
       .tabBar(this.tabBarBuilder(3,'消息'))
 
       TabContent(){
-        DiscoverPage()
+        MinePage()
       }
       .tabBar(this.tabBarBuilder(4,'我的'))
     }

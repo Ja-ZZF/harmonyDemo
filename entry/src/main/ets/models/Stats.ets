@@ -7,6 +7,11 @@ export interface CollectStats{
   is_collected : boolean;
 }
 
+export interface FollowStats{
+  follower_count:number;
+  followee_count:number;
+}
+
 export function createEmptyLikeStats(): LikeStats{
   return {
     like_count : 0,
@@ -18,5 +23,12 @@ export function  createEmptyCollectStats():CollectStats{
   return {
     collect_count : 0,
     is_collected : false,
+  };
+}
+
+export function  createEmptyFollowStats():FollowStats{
+  return {
+    follower_count : 0,
+    followee_count: 0 ,
   };
 }
