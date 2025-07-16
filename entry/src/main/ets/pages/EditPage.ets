@@ -16,7 +16,9 @@ export struct EditPage {
   @State uploadedUrls : string[] = [];
 
   aboutToAppear(): void {
-    this.addImage();
+    if(this.isActive) {
+      this.addImage();
+    }
   }
 
   build() {

@@ -20,6 +20,8 @@ export struct PostImageCarousel {
     eventBus.on('saveImage', this.handleSaveImage.bind(this));
   }
 
+  
+
 
   build() {
     Column({ space: 8 }) {

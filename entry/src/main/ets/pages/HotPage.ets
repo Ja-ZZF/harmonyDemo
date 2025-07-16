@@ -76,7 +76,7 @@ export struct HotPage {
   }
 
   build() {
-    if (this.loadedCount <=2 || !this.isActive) {
+    if (this.loadedCount <=2) {
       Column() {
         Progress({
           value: null, // 不设置 value 就是无限旋转
@@ -94,6 +94,7 @@ export struct HotPage {
             {
               //视频
               Column() {
+                if(this.isActive){}
                 Video({
                   src: post.post_simple.cover_url,
                   controller: this.videoControllers[index]
