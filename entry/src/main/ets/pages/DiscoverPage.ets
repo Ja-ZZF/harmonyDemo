@@ -25,6 +25,8 @@ export struct DiscoverPage {
   @State data : PostSimpleDataSource = new PostSimpleDataSource();
   @State loadedCount : number = 0;
 
+  @State isRefreshing: boolean = false;
+
 
   async aboutToAppear(): Promise<void> {
     this.user = await this.userService.getSelf(); //获取用户信息
@@ -33,7 +35,6 @@ export struct DiscoverPage {
     for(const post of this.posts){//添加到懒数据
         this.data.pushData(post);
         this.loadedCount += 1;
-
     }
 
     console.info('笔记信息：',this.posts);
@@ -52,33 +53,56 @@ export struct DiscoverPage {
       }
     }
     else {
-      Scroll() {
-        Column({ space: 16 }) {
+      Refresh({refreshing :$$this.isRefreshing}) {
+        Scroll() {
+          Column({ space: 16 }) {
 
-          // 主体：两列卡片流式布局
-          WaterFlow() {
-            LazyForEach(this.data, (post: PostSimple) => {
-              FlowItem() {
-                PostCardSimple({
-                  post: post,
-                })
-                  .onClick(async () => {
-                    await router.push({
-                      url: "pages/PostDetailPage",
-                      params: {
-                        postId: post.post_id,
-                      }
-                    })
+            // 主体：两列卡片流式布局
+            WaterFlow() {
+              LazyForEach(this.data, (post: PostSimple) => {
+                FlowItem() {
+                  PostCardSimple({
+                    post: post,
                   })
-              }
-            })
+                    .transition(TransitionEffect.OPACITY.animation({
+                      duration: Math.floor(Math.random() * (3000 - 500 + 1)) + 500,
+                      curve: Curve.Friction
+                    })
+                      .combine(TransitionEffect.scale({ x: 0.5, y: 0.5 })))
+                    .onClick(async () => {
+                      await router.push({
+                        url: "pages/PostDetailPage",
+                        params: {
+                          postId: post.post_id,
+                        }
+                      })
+                    })
+                }
+              })
+            }
+            .columnsTemplate('1fr 1fr')
+            .columnsGap(4)
+            .rowsGap(4)
           }
-          .columnsTemplate('1fr 1fr')
-          .columnsGap(4)
-          .rowsGap(4)
         }
+        .backgroundColor('rgba(0,0,0,0.05)')
       }
-      .backgroundColor('rgba(0,0,0,0.05)')
+      .onRefreshing(() => {
+        setTimeout(async () => {
+          this.isRefreshing = false;
+          this.posts = await this.postService.getAllPost(); //获取所有笔记信息
+
+          this.data.dataArray = [];
+
+          for(const post of this.posts){//添加到懒数据
+            this.data.pushData(post);
+            this.loadedCount += 1;
+          }
+        }, 1000)
+        console.log('onRefreshing test');
+      })
+      .refreshOffset(64)
+      .pullToRefresh(true)
     }
 
     }

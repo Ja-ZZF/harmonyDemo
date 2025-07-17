@@ -9,6 +9,8 @@ import { PostCommentNew } from '../components/PostCommentNew';
 import { eventBus, EventPayload } from '../commons/utils/EventBus';
 import { convertMediaUrls } from '../commons/utils/MediaUtils';
 import { router } from '@kit.ArkUI';
+import { getHeight } from '../commons/utils/imageHandler';
+import { PostImageGrid } from '../components/PostImageGrid';
 
 
 @Entry
@@ -20,10 +22,13 @@ struct PostDetailPage {
 
   @State postDetail: PostDetail = createEmptyPostDetail();
 
+  @State imageShowingState : boolean = false;
+
+
   async aboutToAppear(): Promise<void> {
-    const params = router.getParams() as PostDetailParams;
-    this.postId = params.postId ?? 0;
-    this.postDetail = await this.postService.getPostDetail(this.postId);
+    const params = router.getParams() as PostDetailParams; //提取参数
+    this.postId = params.postId ?? 0; //提取id
+    this.postDetail = await this.postService.getPostDetail(this.postId); //提取笔记详情
 
     eventBus.on('refreshPostComments', async (payload: EventPayload) => {
       if (payload.type === 'refresh' && Number(payload.data) === this.postId) {
@@ -72,8 +77,33 @@ struct PostDetailPage {
       Scroll()
       {
         Column({ space: 12 }) {
-          //图片
-          PostImageCarousel({ medias: convertMediaUrls(this.postDetail.medias,'medium') })
+
+          //图片区域
+          Column() {
+            if(this.imageShowingState){
+              Column() {
+                PostImageGrid({medias: convertMediaUrls(this.postDetail.medias, 'medium') })
+              }
+                .align(Alignment.TopStart)
+                .width('90%')
+                .height(getHeight(this.postDetail.medias.length))
+                .transition(TransitionEffect.OPACITY.animation({ duration: 1500, curve: Curve.Ease })
+                  .combine(TransitionEffect.scale({x:0.5,y:0.5})))
+            }else {
+              //图片
+              PostImageCarousel({ medias: convertMediaUrls(this.postDetail.medias, 'medium') })
+                .transition(TransitionEffect.OPACITY.animation({ duration: 1500, curve: Curve.Ease })
+                  .combine(TransitionEffect.scale({x:0.5,y:0.5})))
+            }
+          }
+          .width('100%')
+          .gesture(
+            TapGesture({ count: 2 })
+              .onAction((event: GestureEvent) => {
+                if (event) {
+                  this.imageShowingState = !this.imageShowingState;
+                }
+              }))
 
           //正文
           PostContent({
@@ -90,6 +120,17 @@ struct PostDetailPage {
             .backgroundColor('#EEEEEE')
             .margin({top:8,bottom:8})
 
+          // 悬浮固定栏
+          if(this.imageShowingState) {
+            PostBottomBar({
+              comment_count: this.postDetail.comment_count,
+              likeStats: this.postDetail.post_simple.like_stats,
+              collectStats: this.postDetail.collect_stats,
+              postId: this.postDetail.post_simple.post_id,
+            })
+              .width('100%')
+          }
+
           //评论总数提示
           Text('共 '+this.postDetail.comment_count.toString()+' 条评论')
             .textAlign(TextAlign.Start)
@@ -98,21 +139,34 @@ struct PostDetailPage {
           ForEach(this.postDetail.comments, (comment: CommentSimple) => {
             PostCommentNew({ comment: comment })
           }, (comment: CommentSimple) => comment.comment_id.toString())
+          //如果评论为空
+          if(this.postDetail.comment_count === 0){
+            Image($r('app.media.write'))
+              .width('15%')
+              .margin({top:12})
+            Text('评论空空如也')
+              .fontSize(12)
+              .fontWeight(FontWeight.Lighter)
+              .fontStyle(FontStyle.Italic)
+          }
+
         }
-        .padding({ left: 8, right: 8, bottom: 80 }) // 留出底部栏高度
+        .padding({ left: 8, right: 8, bottom: 8}) // 留出底部栏高度
         .width('100%')
       }
-      .flexGrow(1) // 💡 关键
       .width('100%')
+
       // 底部固定栏
-      PostBottomBar({
-        comment_count: this.postDetail.comment_count,
-        likeStats: this.postDetail.post_simple.like_stats,
-        collectStats: this.postDetail.collect_stats,
-        postId : this.postDetail.post_simple.post_id,
-      })
-        .width('100%')
-        //.height(56) // 💡 设置固定高度
+      if(!this.imageShowingState) {
+        PostBottomBar({
+          comment_count: this.postDetail.comment_count,
+          likeStats: this.postDetail.post_simple.like_stats,
+          collectStats: this.postDetail.collect_stats,
+          postId: this.postDetail.post_simple.post_id,
+        })
+          .width('100%')
+      }
+
     }
     .width('100%')
     .height('100%')

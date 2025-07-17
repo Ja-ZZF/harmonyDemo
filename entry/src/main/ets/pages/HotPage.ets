@@ -31,18 +31,18 @@ export struct HotPage {
   @State data: PostDetailDataSource = new PostDetailDataSource();
   @State loadedCount : number = 0;
 
+  @State isRefreshing: boolean = false; //正在刷新
+
 
   async aboutToAppear(){
     this.videoPostIds = await this.postService.getVideoPostList();
 
-    //this.postDetailsList = [];
     this.videoControllers = [];
     this.data = new PostDetailDataSource();
 
     //加载资源
     for(const id of this.videoPostIds){
         const postDetail = await this.postService.getPostDetail(id);
-        //this.postDetailsList.push(postDetail);
         this.data.pushData(postDetail);
         this.videoControllers.push(new VideoController());
         this.loadedCount +=1;
@@ -58,7 +58,31 @@ export struct HotPage {
     eventBus.on('COMMENT_CLICK', (payload) => {
       this.onCommentClick(payload)
     })
+  }
 
+  async loadData(){
+    this.loadedCount = 0;
+    //获取视频列表
+    this.videoPostIds = await this.postService.getVideoPostList();
+
+    //清空控制器和data
+    this.videoControllers = [];
+    this.data = new PostDetailDataSource();
+    this.data.dataArray = [];
+
+    //加载资源
+    for(const id of this.videoPostIds){
+      const postDetail = await this.postService.getPostDetail(id);
+      this.data.pushData(postDetail);
+      this.videoControllers.push(new VideoController());
+      this.loadedCount +=1;
+    }
+
+    // 默认自动播放第一个视频
+    if (this.videoControllers.length > 0) {
+      this.videoControllers[0].start();
+      this.isPlaying = true;
+    }
   }
 
   async aboutToDisappear() {
@@ -88,13 +112,13 @@ export struct HotPage {
       }
 
     } else {
+      Refresh({refreshing :$$this.isRefreshing}) {
         Swiper() {
           LazyForEach(this.data, (post: PostDetail, index) => {
             Stack({alignContent:Alignment.Center}) //覆盖布局
             {
               //视频
               Column() {
-                if(this.isActive){}
                 Video({
                   src: post.post_simple.cover_url,
                   controller: this.videoControllers[index]
@@ -109,14 +133,6 @@ export struct HotPage {
               .height('100%')// 固定高度
               .align(Alignment.Top)
 
-              //顶部搜索框
-              if(!this.isCommenting) {
-                VideoTopBar()
-                  .width('100%')
-                  .height('97%')
-                  .align(Alignment.Top)
-              }
-
               //底部信息
               VideoBottomBar({
                 post:post
@@ -125,12 +141,23 @@ export struct HotPage {
                 .height('99%')
                 .align(Alignment.BottomStart)
 
+              //顶部搜索框
+              if(!this.isCommenting) {
+                VideoTopBar()
+                  .width('100%')
+                  .height('20%')
+                  .align(Alignment.Top)
+                  .offset({y:-285})
+              }
+
+
               //侧栏
               VideoSideBar({
                 post : post
               })
                 .width('95%')
-                .height('98%')
+                .height('20%')
+                .offset({y:115})
                 .align(Alignment.BottomEnd)
 
               //暂停按钮
@@ -171,6 +198,7 @@ export struct HotPage {
         .vertical(true)
         .indicator(false)
         .curve(Curve.Friction)
+        .loop(false)
         .onChange((index: number) => {
           // 切换页时播放当前视频，暂停其他视频
           this.videoControllers.forEach((controller, idx) => {
@@ -184,6 +212,19 @@ export struct HotPage {
           });
           this.currentIndex = index;
         })
+      }
+      .onRefreshing(() => {
+        setTimeout(async () => {
+          this.isRefreshing = false;
+          await this.loadData();
+        }, 1000)
+        console.log('onRefreshing test');
+      })
+      .refreshOffset(64)
+      .pullToRefresh(true)
+      .backgroundColor(Color.Black)
+
+
 
     }
   }

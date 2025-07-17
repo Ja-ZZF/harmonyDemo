@@ -1,14 +1,23 @@
+import { image } from "@kit.ImageKit";
+import { getPixelMapsFromUrls } from "../commons/utils/imageHandler";
+
 @Component
 export struct ImageCarousel {
 
   @Prop medias: string[] = [];
   @State currentIndex: number = 0;
 
+  @State images :image.PixelMap[] = []
+
+  async aboutToAppear(): Promise<void> {
+    this.images = await getPixelMapsFromUrls(this.medias);
+  }
+
   build() {
     Column({ space: 8 }) {
       // Swiper 不传参数，只写内容
       Swiper() {
-        ForEach(this.medias, (media: string, index: number) => {
+        ForEach(this.images, (media: image.PixelMap, index: number) => {
           Image(media)
             .width('100%')
             .aspectRatio(3 / 4)
@@ -21,9 +30,9 @@ export struct ImageCarousel {
       .indicator(false)
 
       // 圆点指示器
-      if (this.medias.length > 1) {
+      if (this.images.length > 1) {
         Row({ space: 6 }) {
-          ForEach(this.medias, (media: string, index: number) => {
+          ForEach(this.images, (media: image.PixelMap, index: number) => {
             Circle()
               .width(8)
               .height(8) // 宽高相等 = 正圆
@@ -37,7 +46,6 @@ export struct ImageCarousel {
         .margin({ top: 4 })
       }
     }
-    .width('100%')
   }
 
 }

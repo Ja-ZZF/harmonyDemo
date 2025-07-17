@@ -3,8 +3,9 @@ export  struct  VideoTopBar{
 
   build() {
     Row(){
-      TextInput({placeholder:"请输入文本"})
+      Search()
         .width('100%')
+        .searchButton('搜索')
         .backgroundBlurStyle(BlurStyle.COMPONENT_THIN)
     }
       .width('98%')

@@ -3,6 +3,7 @@ import { EditPage } from './EditPage';
 import { HomePage } from './HomePage';
 import { HotPage } from './HotPage';
 
+
 @Entry
 @Component
 struct RootPage {
@@ -11,11 +12,22 @@ struct RootPage {
 
   private  tabsController : TabsController = new TabsController();
 
+  getIcon(){
+    if(this.currentIndex == 1){
+      return $r('app.media.add_white');
+    }
+    else if(this.currentIndex == 2){
+      return $r('app.media.add_on');
+    }else{
+      return $r('app.media.add');
+    }
+  }
+
   @Builder
   tabBarBuilder(targetIndex: number, title?: string, icon?: Resource) {
     Column() {
       if(icon) {
-        Image(this.currentIndex === 1?$r('app.media.add_white'):icon)
+        Image(this.getIcon())
           .width(36)
           .height(36)
           .padding({bottom : 4})
@@ -70,6 +82,7 @@ struct RootPage {
     }
     .barHeight(50)
     .barBackgroundColor(this.currentIndex === 1 ?Color.Black : Color.White)
+    .animationDuration(0)
     // .barOverlap(true)
     // .barBackgroundBlurStyle(BlurStyle.Regular);
   }

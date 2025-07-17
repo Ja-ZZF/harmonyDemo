@@ -9,6 +9,8 @@ struct LoginPage {
   //实例化 AuthService
   private authService = new AuthService();
 
+  private userId : number = Number(AuthService.getUserId(getContext(this)));
+
 
   // 登录相关状态
   @State email: string = '';

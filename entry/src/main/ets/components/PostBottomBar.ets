@@ -85,7 +85,7 @@ export struct PostBottomBar {
       .alignItems(VerticalAlign.Center)
       .margin({ left: 16 }) // 拉开输入框和按钮区间距
     }
-    .padding({ left: 16, right: 16, top: 10, bottom: 10 })
+    .padding({ left: 8, right: 8, top: 10, bottom: 10 })
     .backgroundColor(Color.White)
     .alignItems(VerticalAlign.Center)
     .width('100%')

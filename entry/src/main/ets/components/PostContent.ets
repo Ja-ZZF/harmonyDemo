@@ -1,5 +1,7 @@
+import { generateRandomColor } from "../commons/utils/ColorUtils";
 import { formatTime } from "../commons/utils/TimeUtils";
 import { TagSimple } from "../models/Tags";
+import { CustomButton } from "./Buttons/CustomButton";
 
 @Component
 export struct PostContent {
@@ -17,6 +19,7 @@ export struct PostContent {
         .fontWeight('bold')
         .lineHeight(32)
         .width('100%')
+        .margin({bottom:6})
         .textAlign(TextAlign.Start)
 
       //正文
@@ -33,11 +36,7 @@ export struct PostContent {
         space: 8,
       }) {
         ForEach(this.tags, (tag : TagSimple) => {
-          Text(`#${tag.name}`)
-            .fontSize(14)
-            .fontColor('#1E90FF')
-            .fontWeight('500')
-            .textAlign(TextAlign.Start);
+          CustomButton({text:tag.name,buttonColor:generateRandomColor()})
         });
       }
       .margin({ top: 12 })
