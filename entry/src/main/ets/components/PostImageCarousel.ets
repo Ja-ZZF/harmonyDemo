@@ -8,6 +8,7 @@ export struct PostImageCarousel {
   private apiService = new ApiService();
 
   @Prop medias: MediaSimple[] = [];
+  @Prop cover_url : string = '';
   @State currentIndex: number = 0;
 
   imageDialogController : CustomDialogController = new CustomDialogController({
@@ -16,8 +17,15 @@ export struct PostImageCarousel {
     alignment : DialogAlignment.Bottom,
   })
 
-  aboutToAppear() {
+  async aboutToAppear() {
     eventBus.on('saveImage', this.handleSaveImage.bind(this));
+    if(this.medias.length === 0){
+      const media : MediaSimple = {
+        media_id : 0,
+        url : this.cover_url,
+      }
+      await this.medias.push(media);
+    }
   }
 
 

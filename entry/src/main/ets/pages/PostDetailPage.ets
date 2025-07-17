@@ -91,7 +91,7 @@ struct PostDetailPage {
                   .combine(TransitionEffect.scale({x:0.5,y:0.5})))
             }else {
               //图片
-              PostImageCarousel({ medias: convertMediaUrls(this.postDetail.medias, 'medium') })
+              PostImageCarousel({ medias: convertMediaUrls(this.postDetail.medias, 'medium'),cover_url : this.postDetail.post_simple.cover_url})
                 .transition(TransitionEffect.OPACITY.animation({ duration: 1500, curve: Curve.Ease })
                   .combine(TransitionEffect.scale({x:0.5,y:0.5})))
             }

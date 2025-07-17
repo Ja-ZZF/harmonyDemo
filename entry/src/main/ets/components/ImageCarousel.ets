@@ -11,6 +11,7 @@ export struct ImageCarousel {
 
   async aboutToAppear(): Promise<void> {
     this.images = await getPixelMapsFromUrls(this.medias);
+
   }
 
   build() {

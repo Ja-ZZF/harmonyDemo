@@ -1,6 +1,6 @@
 //postService 配置Post笔记相关的各种service
 
-import { AddPostByUrls, PostDetail, PostSimple, PostSimpleRequest } from "../models/Post";
+import { AddPostByUrls, GetInterestsRequest, PostDetail, PostSimple, PostSimpleRequest } from "../models/Post";
 import { ApiService } from "./api.service"
 import { AuthService } from "./auth.service";
 import { preferences } from "@kit.ArkData";
@@ -25,6 +25,21 @@ export class PostService{
     const postsNew = posts.sort(() => Math.random() - 0.5);
 
     return postsNew;
+  }
+
+  //获取感兴趣的post
+  async getInterestedPosts(numPosts: number): Promise<PostSimple[]> {
+    try {
+      const result :PostSimple[]= await this.apiService.post<GetInterestsRequest, PostSimple[]>(
+        'posts/interests',
+        { num_posts: numPosts }
+      );
+      console.log('获取到的推荐帖子:', result);
+      return result;
+    } catch (error) {
+      console.error('获取推荐帖子失败:', error);
+      return [];
+    }
   }
 
   //获取post详情

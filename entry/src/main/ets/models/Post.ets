@@ -9,6 +9,10 @@ export interface  PostSimpleRequest{
   post_ids : number[];
 }
 
+export interface GetInterestsRequest {
+  num_posts: number;
+}
+
 export interface PostDetailParams {
   postId?: number;
 }

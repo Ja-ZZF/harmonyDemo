@@ -30,7 +30,9 @@ export struct DiscoverPage {
 
   async aboutToAppear(): Promise<void> {
     this.user = await this.userService.getSelf(); //获取用户信息
-    this.posts = await this.postService.getAllPost(); //获取所有笔记信息
+    //this.posts = await this.postService.getAllPost(); //获取所有笔记信息
+
+    this.posts = await this.postService.getInterestedPosts(15); //获取所有笔记信息
 
     for(const post of this.posts){//添加到懒数据
         this.data.pushData(post);
@@ -90,7 +92,8 @@ export struct DiscoverPage {
       .onRefreshing(() => {
         setTimeout(async () => {
           this.isRefreshing = false;
-          this.posts = await this.postService.getAllPost(); //获取所有笔记信息
+          //this.posts = await this.postService.getAllPost(); //获取所有笔记信息
+          this.posts = await this.postService.getInterestedPosts(15); //获取所有笔记信息
 
           this.data.dataArray = [];
 
